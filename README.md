@@ -4,7 +4,8 @@ Simplified hypothetical cybersecurity workflow visualisation, implementing Kedro
 
 1. Activate virtual environment with Bash Terminal:
 
-   python -m venv .venv
+python -m venv .venv
+
 source .venv/Scripts/activate
 
 2. Install dependencies:
