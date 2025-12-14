@@ -1,0 +1,89 @@
+"""Nodes for filtering security logs - generates synthetic data."""
+from typing import Dict
+import pandas as pd
+import numpy as np
+
+def generate_sample_logs(
+    num_entries: int,
+    random_seed: int,
+) -> pd.DataFrame:
+
+    np.random.seed(random_seed)
+    
+    timestamps = pd.date_range(
+        start="2024-01-01",
+        periods=num_entries,
+        freq="1min"
+    )
+    
+    df = pd.DataFrame({
+        "timestamp": timestamps,
+        "source_ip": [f"192.168.1.{np.random.randint(1, 255)}" for _ in range(num_entries)],
+        "destination_ip": [f"10.0.0.{np.random.randint(1, 100)}" for _ in range(num_entries)],
+        "event_type": np.random.choice(
+            ["login", "logout", "access", "unauthorized", "malware"],
+            size=num_entries
+        ),
+        "severity": np.random.choice(
+            ["low", "medium", "high", "critical"],
+            size=num_entries,
+            p=[0.5, 0.3, 0.15, 0.05]
+        ),
+    })
+    
+    return df
+
+def filter_security_logs(
+    raw_log_data: pd.DataFrame,
+    filter_criteria: Dict,
+) -> pd.DataFrame:
+ 
+    filtered_logs = raw_log_data.copy()
+    
+    if "min_severity" in filter_criteria:
+        severity_order = ["low", "medium", "high", "critical"]
+        min_severity_idx = severity_order.index(filter_criteria["min_severity"])
+        filtered_logs = filtered_logs[
+            filtered_logs["severity"].map(
+                lambda x: severity_order.index(x) >= min_severity_idx
+                if x in severity_order else False
+            )
+        ]
+    
+    if "source_ip_whitelist" in filter_criteria:
+        whitelist = filter_criteria["source_ip_whitelist"]
+        if whitelist:
+            filtered_logs = filtered_logs[
+                filtered_logs["source_ip"].isin(whitelist)
+            ]
+    
+    if "exclude_event_types" in filter_criteria:
+        exclude = filter_criteria["exclude_event_types"]
+        if exclude:
+            filtered_logs = filtered_logs[
+                ~filtered_logs["event_type"].isin(exclude)
+            ]
+    
+    return filtered_logs
+
+def parse_log_metadata(
+    filtered_logs: pd.DataFrame,
+) -> Dict[str, int]:
+    """
+    Extract metadata from filtered logs.
+    
+    Args:
+        filtered_logs: Filtered log DataFrame
+    
+    Returns:
+        Dictionary with log statistics
+    """
+    return {
+        "total_entries": len(filtered_logs),
+        "unique_sources": filtered_logs["source_ip"].nunique(),
+        "unique_destinations": filtered_logs["destination_ip"].nunique(),
+        "time_span_minutes": (
+            (filtered_logs["timestamp"].max() - filtered_logs["timestamp"].min())
+            .total_seconds() / 60
+        ),
+    }
