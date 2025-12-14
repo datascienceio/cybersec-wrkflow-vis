@@ -7,16 +7,7 @@ def generate_sample_logs(
     num_entries: int,
     random_seed: int,
 ) -> pd.DataFrame:
-    """
-    Generate sample security logs in-memory (NO FILES NEEDED).
-    
-    Args:
-        num_entries: Number of log entries to generate
-        random_seed: Random seed for reproducibility
-    
-    Returns:
-        DataFrame with synthetic log entries
-    """
+
     np.random.seed(random_seed)
     
     timestamps = pd.date_range(
