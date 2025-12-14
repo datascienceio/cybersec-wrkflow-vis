@@ -2,7 +2,7 @@
 
 Simplified hypothetical cybersecurity workflow visualisation, implementing Kedro-Viz (for python 3.11)
 
-1. Activate virtaul environment with Bash Terminal:
+1. Activate virtual environment with Bash Terminal:
 
    python -m venv .venv
 source .venv/Scripts/activate
