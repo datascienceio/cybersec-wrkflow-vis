@@ -1,7 +1,6 @@
 # cybersec-wrkflow-vis 
 
-Simplified hypothetical cybersecurity workflow visualisation, implementing Kedro-Viz (for python 3.11)
-
+Simplified hypothetical cybersecurity workflow visualisation, implementing Kedro-Viz (for python 3.11) © QuantumBlack 
 1. Activate virtual environment with Bash Terminal:
 
 python -m venv .venv
